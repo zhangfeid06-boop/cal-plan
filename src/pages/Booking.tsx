@@ -3,6 +3,7 @@ import { AppSidebar } from '@/components/layout/AppSidebar';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { BookingCalendar } from '@/components/booking/BookingCalendar';
 import { BookingModal } from '@/components/booking/BookingModal';
+import { BookingDetailPanel } from '@/components/booking/BookingDetailPanel';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -83,8 +84,9 @@ const Booking = () => {
     <div className="flex h-screen bg-background">
       <AppSidebar />
       
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <PageHeader title="预约会议室">
+      <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <PageHeader title="预约会议室">
           <div className="flex gap-3 mt-4 items-center justify-between">
             <div className="flex gap-3 flex-1">
               <div className="flex items-center gap-2 bg-card rounded-lg border border-border px-3 py-2">
@@ -195,7 +197,21 @@ const Booking = () => {
             onTimeSlotClick={handleTimeSlotClick}
             onBookingClick={handleBookingClick}
           />
+          </div>
         </div>
+
+        {/* 右侧详情面板 */}
+        {showBookingDetail && selectedBooking && (
+          <BookingDetailPanel
+            booking={selectedBooking}
+            onEdit={handleEditBooking}
+            onCancel={handleCancelBooking}
+            onClose={() => {
+              setShowBookingDetail(false);
+              setSelectedBooking(null);
+            }}
+          />
+        )}
       </div>
 
       <BookingModal
@@ -209,59 +225,6 @@ const Booking = () => {
         mode={selectedBooking ? 'edit' : 'create'}
       />
 
-      <Popover open={showBookingDetail} onOpenChange={setShowBookingDetail}>
-        <PopoverContent className="w-80" align="center">
-          {selectedBooking && (
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-semibold text-lg">{selectedBooking.title}</h3>
-                <div className="text-sm text-muted-foreground mt-1">
-                  {format(new Date(selectedBooking.startTime), 'yyyy-MM-dd HH:mm')} - 
-                  {format(new Date(selectedBooking.endTime), 'HH:mm')}
-                </div>
-              </div>
-
-              <div className="space-y-2 text-sm">
-                <div>
-                  <span className="text-muted-foreground">会议室：</span>
-                  <span>{selectedBooking.roomName}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">组织者：</span>
-                  <span>{selectedBooking.organizer}</span>
-                </div>
-                {selectedBooking.participants.length > 0 && (
-                  <div>
-                    <span className="text-muted-foreground">参会人：</span>
-                    <span>{selectedBooking.participants.join(', ')}</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex gap-2 pt-2 border-t">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleEditBooking}
-                  className="flex-1"
-                  disabled={!selectedBooking.isMyBooking}
-                >
-                  编辑
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleCancelBooking}
-                  className="flex-1 text-destructive hover:text-destructive"
-                  disabled={!selectedBooking.isMyBooking}
-                >
-                  取消会议
-                </Button>
-              </div>
-            </div>
-          )}
-        </PopoverContent>
-      </Popover>
     </div>
   );
 };

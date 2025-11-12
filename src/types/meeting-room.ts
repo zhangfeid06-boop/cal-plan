@@ -22,8 +22,10 @@ export interface Booking {
   participants: string[];
   organizer: string;
   description?: string;
-  notificationTime: string;
+  notificationTime?: string;
+  notificationMinutes?: number;
   isMyBooking: boolean;
+  status: BookingStatus;
   externalGuests?: ExternalGuest[];
 }
 
@@ -47,6 +49,7 @@ export interface ExternalGuest {
   company?: string;
   carPlate?: string;
   passCode?: string;
+  passIssued?: boolean;
   status: 'pending' | 'registered' | 'checked-in';
 }
 

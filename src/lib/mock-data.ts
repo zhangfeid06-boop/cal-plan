@@ -85,7 +85,9 @@ export const mockBookings: Booking[] = [
     participants: ['张三', '李四'],
     organizer: '当前用户',
     notificationTime: '15',
+    notificationMinutes: 15,
     isMyBooking: true,
+    status: 'my-booking',
   },
   {
     id: 'b2',
@@ -97,7 +99,9 @@ export const mockBookings: Booking[] = [
     participants: ['王五'],
     organizer: '其他用户',
     notificationTime: '15',
+    notificationMinutes: 15,
     isMyBooking: false,
+    status: 'booked',
   },
 ];
 

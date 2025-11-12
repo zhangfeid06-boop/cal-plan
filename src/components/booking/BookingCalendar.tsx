@@ -69,63 +69,64 @@ export function BookingCalendar({
 
   if (viewMode === 'day') {
     return (
-      <div className="space-y-3">
+      <div className="space-y-1">
         {rooms.map((room) => (
           <div key={room.id} className="bg-card rounded-lg border border-border overflow-hidden">
-            <div className="flex items-center gap-3 p-3 border-b border-border">
-              <img
-                src={room.image}
-                alt={room.name}
-                className="h-16 w-20 rounded object-cover bg-muted shrink-0"
-              />
-              <div className="flex-1 min-w-0">
-                <div className="font-medium text-foreground">{room.name}</div>
-                <div className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-                  <span>{room.location}</span>
-                  <span>·</span>
-                  <span>{room.capacity}人</span>
-                  <span>·</span>
-                  <span>{room.facilities.join('/')}</span>
+            <div className="flex items-stretch">
+              {/* 左侧会议室信息 - 更紧凑的布局 */}
+              <div className="flex items-center gap-2 p-2 border-r border-border w-56 shrink-0">
+                <img
+                  src={room.image}
+                  alt={room.name}
+                  className="h-10 w-12 rounded object-cover bg-muted shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-foreground truncate">{room.name}</div>
+                  <div className="text-xs text-muted-foreground truncate">
+                    {room.location} · {room.capacity}人
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="p-3">
-              <div className="flex gap-1 overflow-x-auto">
-                {getTimeSlots().map((hour) => {
-                  const slotBookings = getBookingsForRoomAndTime(room.id, selectedDate, hour);
-                  const hasBooking = slotBookings.length > 0;
-                  const booking = slotBookings[0];
+              
+              {/* 右侧时间轴 - 与会议室信息同行 */}
+              <div className="flex-1 p-2 overflow-x-auto">
+                <div className="flex gap-1">
+                  {getTimeSlots().map((hour) => {
+                    const slotBookings = getBookingsForRoomAndTime(room.id, selectedDate, hour);
+                    const hasBooking = slotBookings.length > 0;
+                    const booking = slotBookings[0];
 
-                  return (
-                    <div
-                      key={hour}
-                      className={cn(
-                        "flex-shrink-0 w-20 h-16 rounded border text-center text-xs cursor-pointer transition-colors",
-                        !hasBooking && "bg-status-available hover:bg-accent border-border",
-                        hasBooking && booking.isMyBooking && "bg-status-myBooking border-primary",
-                        hasBooking && !booking.isMyBooking && "bg-status-booked border-warning"
-                      )}
-                      onClick={() => {
-                        if (hasBooking) {
-                          onBookingClick(booking);
-                        } else {
-                          const startTime = new Date(selectedDate);
-                          startTime.setHours(hour, 0, 0, 0);
-                          onTimeSlotClick(room, startTime);
-                        }
-                      }}
-                    >
-                      <div className="pt-2 text-muted-foreground font-medium">
-                        {`${hour}:00`}
-                      </div>
-                      {hasBooking && (
-                        <div className="px-1 mt-1 truncate text-foreground">
-                          {booking.title}
+                    return (
+                      <div
+                        key={hour}
+                        className={cn(
+                          "flex-shrink-0 w-16 h-12 rounded border text-center text-xs cursor-pointer transition-colors flex flex-col justify-center",
+                          !hasBooking && "bg-status-available hover:bg-accent border-border",
+                          hasBooking && booking.isMyBooking && "bg-status-myBooking border-primary",
+                          hasBooking && !booking.isMyBooking && "bg-status-booked border-warning"
+                        )}
+                        onClick={() => {
+                          if (hasBooking) {
+                            onBookingClick(booking);
+                          } else {
+                            const startTime = new Date(selectedDate);
+                            startTime.setHours(hour, 0, 0, 0);
+                            onTimeSlotClick(room, startTime);
+                          }
+                        }}
+                      >
+                        <div className="text-muted-foreground font-medium">
+                          {`${hour}:00`}
                         </div>
-                      )}
-                    </div>
-                  );
-                })}
+                        {hasBooking && (
+                          <div className="px-1 truncate text-foreground text-xs">
+                            {booking.title}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>

@@ -23,8 +23,7 @@ const Index = () => {
   const [facilityFilter, setFacilityFilter] = useState('all');
 
   const handleEdit = (room: MeetingRoom) => {
-    toast.info(`编辑会议室：${room.name}`);
-    // In real app, navigate to edit page
+    window.location.href = `/room-edit/${room.id}`;
   };
 
   const handleDelete = (roomId: string) => {
