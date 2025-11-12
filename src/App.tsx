@@ -7,6 +7,8 @@ import Index from "./pages/Index";
 import Booking from "./pages/Booking";
 import RoomEdit from "./pages/RoomEdit";
 import MyMeetings from "./pages/MyMeetings";
+import GuestInvite from "./pages/GuestInvite";
+import GuestPass from "./pages/GuestPass";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +27,8 @@ const App = () => (
           <Route path="/display" element={<MyMeetings />} />
           <Route path="/energy" element={<MyMeetings />} />
           <Route path="/announcements" element={<MyMeetings />} />
+          <Route path="/guest-invite/:bookingId" element={<GuestInvite />} />
+          <Route path="/guest-pass/:guestId" element={<GuestPass />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
