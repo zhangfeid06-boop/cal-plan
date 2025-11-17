@@ -1,4 +1,4 @@
-import { MeetingRoom, Booking, Hold } from '@/types/meeting-room';
+import { MeetingRoom, Booking, Hold, Device } from '@/types/meeting-room';
 
 export const mockRooms: MeetingRoom[] = [
   {
@@ -106,3 +106,46 @@ export const mockBookings: Booking[] = [
 ];
 
 export const mockHolds: Hold[] = [];
+
+export const mockDevices: Device[] = [
+  {
+    id: 'device-1',
+    name: '智慧终端_GN0011',
+    type: '智慧终端',
+    model: 'MS02K',
+    roomId: '3a-601-2',
+    status: '空闲',
+    firmwareVersion: 'v2.3.1',
+    appVersion: 'v1.5.2',
+  },
+  {
+    id: 'device-2',
+    name: '主机/UBDT',
+    type: '投屏终端',
+    model: 'UBDT-X200',
+    roomId: '3a-601-2',
+    status: '使用中',
+    firmwareVersion: 'v3.1.0',
+    appVersion: 'v2.0.1',
+  },
+  {
+    id: 'device-3',
+    name: '投屏终端_A101',
+    type: '投屏终端',
+    model: 'MS02K',
+    roomId: '3a-601-3',
+    status: '离线',
+    firmwareVersion: 'v2.3.1',
+    appVersion: 'v1.5.2',
+  },
+  {
+    id: 'device-4',
+    name: '智慧终端_GN0012',
+    type: '智慧终端',
+    model: 'MS03K',
+    roomId: '3a-601-3',
+    status: '空闲',
+    firmwareVersion: 'v2.4.0',
+    appVersion: 'v1.6.0',
+  },
+];

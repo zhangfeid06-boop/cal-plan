@@ -56,3 +56,17 @@ export interface ExternalGuest {
 export type ViewMode = 'day' | 'week';
 
 export type BookingStatus = 'available' | 'booked' | 'my-booking' | 'unavailable' | 'reserved';
+
+export type DeviceType = '投屏终端' | '智慧终端' | '未知';
+export type DeviceStatus = '空闲' | '离线' | '使用中';
+
+export interface Device {
+  id: string;
+  name: string;
+  type: DeviceType;
+  model: string;
+  roomId: string;
+  status: DeviceStatus;
+  firmwareVersion: string;
+  appVersion: string;
+}

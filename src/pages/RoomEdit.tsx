@@ -27,9 +27,18 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { mockRooms } from '@/lib/mock-data';
+import { mockRooms, mockDevices } from '@/lib/mock-data';
+import { Device } from '@/types/meeting-room';
 import { toast } from 'sonner';
-import { Info, Upload } from 'lucide-react';
+import { Info, Upload, ExternalLink } from 'lucide-react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 const RoomEdit = () => {
   const navigate = useNavigate();
@@ -53,6 +62,11 @@ const RoomEdit = () => {
   });
 
   const [showCloseConfirm, setShowCloseConfirm] = useState(false);
+  const [showUnbindConfirm, setShowUnbindConfirm] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
+  
+  // 获取当前会议室的设备列表
+  const roomDevices = mockDevices.filter(device => device.roomId === id);
 
   const handleSave = () => {
     // TODO: 实际保存逻辑
@@ -75,6 +89,36 @@ const RoomEdit = () => {
   const confirmCloseBooking = () => {
     setFormData({ ...formData, isOpen: false });
     setShowCloseConfirm(false);
+  };
+
+  const handleUnbindDevice = (device: Device) => {
+    setSelectedDevice(device);
+    setShowUnbindConfirm(true);
+  };
+
+  const confirmUnbind = () => {
+    // TODO: 实际解绑逻辑
+    toast.success(`设备 ${selectedDevice?.name} 已解绑`);
+    setShowUnbindConfirm(false);
+    setSelectedDevice(null);
+  };
+
+  const handleViewDeviceDetail = (deviceId: string) => {
+    // TODO: 跳转到设备详情页
+    toast.info('跳转到设备详情页');
+  };
+
+  const getDeviceStatusColor = (status: Device['status']) => {
+    switch (status) {
+      case '空闲':
+        return 'bg-status-available text-status-available-foreground';
+      case '使用中':
+        return 'bg-status-booked text-status-booked-foreground';
+      case '离线':
+        return 'bg-muted text-muted-foreground';
+      default:
+        return 'bg-muted text-muted-foreground';
+    }
   };
 
   const facilityOptions = [
@@ -103,6 +147,7 @@ const RoomEdit = () => {
               <TabsList>
                 <TabsTrigger value="basic">基本信息</TabsTrigger>
                 <TabsTrigger value="settings">会议室设置</TabsTrigger>
+                <TabsTrigger value="devices">设备列表</TabsTrigger>
               </TabsList>
 
               {/* 基本信息 */}
@@ -354,6 +399,79 @@ const RoomEdit = () => {
                   </div>
                 </div>
               </TabsContent>
+
+              {/* 设备列表 */}
+              <TabsContent value="devices" className="space-y-6">
+                <div className="bg-card rounded-lg border border-border p-6">
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-lg font-semibold">设备列表</h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        管理绑定到此会议室的所有设备
+                      </p>
+                    </div>
+
+                    {roomDevices.length === 0 ? (
+                      <div className="text-center py-12 text-muted-foreground">
+                        暂无绑定设备
+                      </div>
+                    ) : (
+                      <div className="border rounded-lg">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>设备名称</TableHead>
+                              <TableHead>类型</TableHead>
+                              <TableHead>设备型号</TableHead>
+                              <TableHead>所属会议室</TableHead>
+                              <TableHead>状态</TableHead>
+                              <TableHead>固件版本</TableHead>
+                              <TableHead>应用版本</TableHead>
+                              <TableHead className="text-right">操作</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {roomDevices.map((device) => (
+                              <TableRow key={device.id}>
+                                <TableCell className="font-medium">{device.name}</TableCell>
+                                <TableCell>{device.type}</TableCell>
+                                <TableCell>{device.model}</TableCell>
+                                <TableCell>{room?.name}</TableCell>
+                                <TableCell>
+                                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getDeviceStatusColor(device.status)}`}>
+                                    {device.status}
+                                  </span>
+                                </TableCell>
+                                <TableCell className="text-muted-foreground">{device.firmwareVersion}</TableCell>
+                                <TableCell className="text-muted-foreground">{device.appVersion}</TableCell>
+                                <TableCell className="text-right">
+                                  <div className="flex gap-2 justify-end">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handleViewDeviceDetail(device.id)}
+                                    >
+                                      <ExternalLink className="h-4 w-4 mr-1" />
+                                      详情
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handleUnbindDevice(device)}
+                                    >
+                                      解绑
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </TabsContent>
             </Tabs>
           </div>
         </div>
@@ -371,6 +489,27 @@ const RoomEdit = () => {
           <AlertDialogFooter>
             <AlertDialogCancel>取消</AlertDialogCancel>
             <AlertDialogAction onClick={confirmCloseBooking}>确定</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* 解绑设备确认弹窗 */}
+      <AlertDialog open={showUnbindConfirm} onOpenChange={setShowUnbindConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>确认解绑</AlertDialogTitle>
+            <AlertDialogDescription>
+              您确定要将设备 "{selectedDevice?.name}" 从会议室 "{room?.name}" 解绑吗？解绑后，会议室的预约和控制功能可能受影响。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmUnbind}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              确认解绑
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
