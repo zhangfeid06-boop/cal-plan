@@ -31,8 +31,15 @@ export default function GuestInvite() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    // 模拟加载会议信息
-    const foundBooking = mockBookings.find(b => b.id === bookingId);
+    // 从mock数据和localStorage中查找会议信息
+    let foundBooking = mockBookings.find(b => b.id === bookingId);
+    
+    // 如果在mock数据中找不到，尝试从localStorage中查找动态创建的预约
+    if (!foundBooking) {
+      const savedBookings = JSON.parse(localStorage.getItem('dynamicBookings') || '[]');
+      foundBooking = savedBookings.find((b: any) => b.id === bookingId);
+    }
+    
     if (foundBooking) {
       setBooking(foundBooking);
     }

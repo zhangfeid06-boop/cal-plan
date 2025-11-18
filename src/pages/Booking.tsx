@@ -52,7 +52,13 @@ const Booking = () => {
   };
 
   const handleSaveBooking = (booking: Partial<BookingType>) => {
-    setBookings([...bookings, booking as BookingType]);
+    const newBooking = booking as BookingType;
+    setBookings([...bookings, newBooking]);
+    
+    // 保存到localStorage以便邀约链接可以访问
+    const savedBookings = JSON.parse(localStorage.getItem('dynamicBookings') || '[]');
+    savedBookings.push(newBooking);
+    localStorage.setItem('dynamicBookings', JSON.stringify(savedBookings));
   };
 
   const handleCancelBooking = () => {
