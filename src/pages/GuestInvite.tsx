@@ -10,8 +10,8 @@ import { Separator } from '@/components/ui/separator';
 import { Calendar, Clock, MapPin, User, Phone, Car, Building2, Users } from 'lucide-react';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { mockBookings } from '@/lib/mock-data';
 
 export default function GuestInvite() {
   const [searchParams] = useSearchParams();
@@ -33,19 +33,31 @@ export default function GuestInvite() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    // 从mock数据和localStorage中查找会议信息
-    let foundBooking = mockBookings.find(b => b.id === bookingId);
-    
-    // 如果在mock数据中找不到，尝试从localStorage中查找动态创建的预约
-    if (!foundBooking) {
-      const savedBookings = JSON.parse(localStorage.getItem('dynamicBookings') || '[]');
-      foundBooking = savedBookings.find((b: any) => b.id === bookingId);
+    if (!bookingId) {
+      setLoading(false);
+      return;
     }
-    
-    if (foundBooking) {
-      setBooking(foundBooking);
-    }
-    setLoading(false);
+
+    // 从数据库查询会议信息
+    const fetchBooking = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('get-booking', {
+          body: { bookingId }
+        });
+
+        if (error) throw error;
+
+        if (data?.booking) {
+          setBooking(data.booking);
+        }
+      } catch (error) {
+        console.error('Error fetching booking:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBooking();
   }, [bookingId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,11 +83,22 @@ export default function GuestInvite() {
     setSubmitting(true);
 
     try {
-      // 模拟提交登记
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // 生成访客ID并跳转到通行证页面
-      const guestId = `guest_${Date.now()}`;
+      // 调用 Edge Function 提交登记
+      const { data, error } = await supabase.functions.invoke('register-guest', {
+        body: {
+          bookingId,
+          name: formData.name,
+          phone: formData.phone,
+          attendeeCount: formData.attendeeCount,
+          carPlate: formData.carPlate,
+          company: formData.company,
+          agreedToTerms
+        }
+      });
+
+      if (error) throw error;
+
+      const guestId = data?.guestId;
       toast.success('登记成功！正在生成通行证...');
       
       setTimeout(() => {
@@ -87,6 +110,7 @@ export default function GuestInvite() {
         });
       }, 500);
     } catch (error) {
+      console.error('Error registering guest:', error);
       toast.error('登记失败，请重试');
       setSubmitting(false);
     }

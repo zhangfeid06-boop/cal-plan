@@ -1,1 +1,7 @@
 project_id = "xirdphpzcpkjgvidwvwq"
+
+[functions.get-booking]
+verify_jwt = false
+
+[functions.register-guest]
+verify_jwt = false
