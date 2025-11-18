@@ -20,6 +20,7 @@ import { zhCN } from 'date-fns/locale';
 import { mockRooms, mockBookings } from '@/lib/mock-data';
 import { ViewMode, MeetingRoom, Booking as BookingType } from '@/types/meeting-room';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 import {
   Popover,
   PopoverContent,
@@ -51,14 +52,40 @@ const Booking = () => {
     setShowBookingDetail(true);
   };
 
-  const handleSaveBooking = (booking: Partial<BookingType>) => {
+  const handleSaveBooking = async (booking: Partial<BookingType>) => {
     const newBooking = booking as BookingType;
-    setBookings([...bookings, newBooking]);
     
-    // 保存到localStorage以便邀约链接可以访问
-    const savedBookings = JSON.parse(localStorage.getItem('dynamicBookings') || '[]');
-    savedBookings.push(newBooking);
-    localStorage.setItem('dynamicBookings', JSON.stringify(savedBookings));
+    try {
+      // 保存到数据库
+      const { error } = await supabase
+        .from('bookings')
+        .insert({
+          id: newBooking.id,
+          room_id: newBooking.roomId,
+          room_name: newBooking.roomName,
+          title: newBooking.title,
+          organizer: newBooking.organizer,
+          start_time: newBooking.startTime.toISOString(),
+          end_time: newBooking.endTime.toISOString(),
+          participants: newBooking.participants,
+          description: newBooking.description,
+          notification_minutes: newBooking.notificationMinutes,
+          status: newBooking.status
+        });
+
+      if (error) {
+        console.error('Error saving booking:', error);
+        toast.error('保存会议失败，请重试');
+        return;
+      }
+
+      // 更新本地状态
+      setBookings([...bookings, newBooking]);
+      toast.success('会议已创建');
+    } catch (error) {
+      console.error('Error saving booking:', error);
+      toast.error('保存会议失败，请重试');
+    }
   };
 
   const handleCancelBooking = () => {
