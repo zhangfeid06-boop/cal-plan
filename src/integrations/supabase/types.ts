@@ -14,7 +14,192 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_time: string
+          id: string
+          notification_minutes: number | null
+          organizer: string
+          organizer_id: string | null
+          participants: string[] | null
+          room_id: string
+          room_name: string
+          start_time: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_time: string
+          id: string
+          notification_minutes?: number | null
+          organizer: string
+          organizer_id?: string | null
+          participants?: string[] | null
+          room_id: string
+          room_name: string
+          start_time: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_time?: string
+          id?: string
+          notification_minutes?: number | null
+          organizer?: string
+          organizer_id?: string | null
+          participants?: string[] | null
+          room_id?: string
+          room_name?: string
+          start_time?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "meeting_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      devices: {
+        Row: {
+          app_version: string | null
+          created_at: string
+          firmware_version: string | null
+          id: string
+          model: string
+          name: string
+          room_id: string | null
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          app_version?: string | null
+          created_at?: string
+          firmware_version?: string | null
+          id: string
+          model: string
+          name: string
+          room_id?: string | null
+          status?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          app_version?: string | null
+          created_at?: string
+          firmware_version?: string | null
+          id?: string
+          model?: string
+          name?: string
+          room_id?: string | null
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "devices_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "meeting_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guest_registrations: {
+        Row: {
+          agreed_to_terms: boolean
+          attendee_count: number | null
+          booking_id: string
+          car_plate: string | null
+          company: string | null
+          created_at: string
+          id: string
+          name: string
+          phone: string
+        }
+        Insert: {
+          agreed_to_terms?: boolean
+          attendee_count?: number | null
+          booking_id: string
+          car_plate?: string | null
+          company?: string | null
+          created_at?: string
+          id: string
+          name: string
+          phone: string
+        }
+        Update: {
+          agreed_to_terms?: boolean
+          attendee_count?: number | null
+          booking_id?: string
+          car_plate?: string | null
+          company?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_registrations_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meeting_rooms: {
+        Row: {
+          capacity: number
+          created_at: string
+          equipment: string[] | null
+          floor: string
+          id: string
+          image_url: string | null
+          name: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          capacity: number
+          created_at?: string
+          equipment?: string[] | null
+          floor: string
+          id: string
+          image_url?: string | null
+          name: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          capacity?: number
+          created_at?: string
+          equipment?: string[] | null
+          floor?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
