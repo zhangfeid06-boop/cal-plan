@@ -27,7 +27,7 @@ const App = () => (
           <Route path="/display" element={<MyMeetings />} />
           <Route path="/energy" element={<MyMeetings />} />
           <Route path="/announcements" element={<MyMeetings />} />
-          <Route path="/guest-invite/:bookingId" element={<GuestInvite />} />
+          <Route path="/guest-invite" element={<GuestInvite />} />
           <Route path="/guest-pass/:guestId" element={<GuestPass />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

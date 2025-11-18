@@ -42,7 +42,7 @@ export function BookingDetailPanel({
   const [guestPhone, setGuestPhone] = useState('');
 
   const handleCopyInviteLink = () => {
-    const link = `${window.location.origin}/guest-invite/${booking.id}`;
+    const link = `${window.location.origin}/guest-invite?bookingId=${booking.id}`;
     navigator.clipboard.writeText(link);
     toast.success('邀约链接已复制');
   };
