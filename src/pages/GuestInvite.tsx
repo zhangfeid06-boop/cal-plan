@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,7 +14,8 @@ import { toast } from 'sonner';
 import { mockBookings } from '@/lib/mock-data';
 
 export default function GuestInvite() {
-  const { bookingId } = useParams();
+  const [searchParams] = useSearchParams();
+  const bookingId = searchParams.get('bookingId');
   const navigate = useNavigate();
   const [booking, setBooking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
